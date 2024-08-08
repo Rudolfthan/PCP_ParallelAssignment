@@ -3,6 +3,7 @@ package serialAbelianSandpile;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 /* Serial  program to simulate an Abelian Sandpile cellular automaton
  * This is the reference sequential version (Do not modify this code)
  * Michelle Kuttel 2024, University of Cape Town
@@ -100,6 +101,8 @@ class AutomatonSimulation{
     	//Do NOT CHANGE below!
     	//simulation details - you must keep these lines at the end of the output in the parallel versions      	System.out.printf("\t Rows: %d, Columns: %d\n", simulationGrid.getRows(), simulationGrid.getColumns());
 		System.out.printf("Number of steps to stable state: %d \n",counter);
+		//System.out.println(Runtime.getRuntime().availableProcessors());
+		//System.out.println(Arrays.toString(simulationGrid.updateGrid));
 		System.out.printf("Time: %d ms\n",endTime - startTime );			/*  Total computation time */		
     }
 }
