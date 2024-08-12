@@ -9,7 +9,7 @@ import java.util.concurrent.RecursiveTask;
 import javax.imageio.ImageIO;
 
 //This class is for the grid for the Abelian Sandpile cellular automaton
-public class Grid extends RecursiveTask<Boolean>{
+public class parallelGrid extends RecursiveTask<Boolean>{
 	private int rows, columns;
 	int [][] grid; //grid 
 	int [][] updateGrid;//grid for next time step
@@ -17,7 +17,7 @@ public class Grid extends RecursiveTask<Boolean>{
 	private static final  int SEQUENTIAL_CUTOFF = 10;
 
     
-	public Grid(int w, int h) {
+	public parallelGrid(int w, int h) {
 		rows = w+2; //for the "sink" border
 		columns = h+2; //for the "sink" border
 		grid = new int[this.rows][this.columns];
@@ -30,7 +30,7 @@ public class Grid extends RecursiveTask<Boolean>{
 			}
 		}
 	}
-	public Grid(int [][] grid ,int [][] updateGrid , int lo, int hi) {
+	public parallelGrid(int [][] grid ,int [][] updateGrid , int lo, int hi) {
 		this.grid=grid;
 		this.updateGrid=updateGrid;
 		this.lo=lo;
@@ -41,7 +41,7 @@ public class Grid extends RecursiveTask<Boolean>{
 
 	}
 
-	public Grid(int[][] newGrid) {
+	public parallelGrid(int[][] newGrid) {
 		this(newGrid.length,newGrid[0].length); //call constructor above
 		//don't copy over sink border
 		for(int i=1; i<rows-1; i++ ) {
@@ -51,7 +51,7 @@ public class Grid extends RecursiveTask<Boolean>{
 		}
 		
 	}
-	public Grid(Grid copyGrid) {
+	public parallelGrid(parallelGrid copyGrid) {
 		this(copyGrid.rows,copyGrid.columns); //call constructor above
 		/* grid  initialization */
 		for(int i=0; i<rows; i++ ) {
@@ -92,24 +92,6 @@ public class Grid extends RecursiveTask<Boolean>{
 		}
 	}
 	
-	//key method to calculate the next update grod
-	// boolean update() {
-	// 	boolean change=false;
-	// 	//do not update border
-	// 	for( int i = 1; i<rows-1; i++ ) {
-	// 		for( int j = 1; j<columns-1; j++ ) {
-	// 			updateGrid[i][j] = (grid[i][j] % 4) + 
-	// 					(grid[i-1][j] / 4) +
-	// 					grid[i+1][j] / 4 +
-	// 					grid[i][j-1] / 4 + 
-	// 					grid[i][j+1] / 4;
-	// 			if (grid[i][j]!=updateGrid[i][j]) {  
-	// 				change=true;
-	// 			}
-	// 	}} //end nested for
-	// if (change) { nextTimeStep();}
-	// return change;
-	// }
 
 	protected Boolean compute() {
 
@@ -127,22 +109,18 @@ public class Grid extends RecursiveTask<Boolean>{
                         change = true;
                     }
                 }
-            } // end nested for
-            // if (change) {
-            //     nextTimeStep();
-            // }
+            } 
             return change;
         } else {
             int mid = (lo + hi) / 2;
-            Grid left = new Grid(grid,updateGrid, lo, mid);
-            Grid right = new Grid(grid,updateGrid , mid, hi);
+            parallelGrid left = new parallelGrid(grid,updateGrid, lo, mid);
+            parallelGrid right = new parallelGrid(grid,updateGrid , mid, hi);
 			left.fork(); //this
-            boolean rightAns = right.compute(); //order
-            boolean leftAns = left.join(); //is very
+            boolean rightAns = right.compute(); 
+            boolean leftAns = left.join(); 
             return leftAns || rightAns; 
             
-            // invokeAll(left, right);
-            // return left.join() || right.join();
+
 
         }
     }

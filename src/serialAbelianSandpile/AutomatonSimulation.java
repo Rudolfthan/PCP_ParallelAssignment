@@ -58,7 +58,7 @@ class AutomatonSimulation{
 	 
     public static void main(String[] args) throws IOException  {
         ForkJoinPool f = ForkJoinPool.commonPool();
-    	Grid simulationGrid;  //the cellular automaton grid
+    	parallelGrid simulationGrid;  //the cellular automaton grid
     	  	
     	if (args.length!=2) {   //input is the name of the input and output files
     		System.out.println("Incorrect number of command line arguments provided.");   	
@@ -69,7 +69,7 @@ class AutomatonSimulation{
 		String outputFileName=args[1]; // output file name
     
     	// Read from input .csv file
-    	simulationGrid = new Grid(readArrayFromCSV(inputFileName));
+    	simulationGrid = new parallelGrid(readArrayFromCSV(inputFileName));
     	
     	//for debugging - hardcoded re-initialisation options
     	//simulationGrid.set(rows/2,columns/2,rows*columns*2);
@@ -85,7 +85,7 @@ class AutomatonSimulation{
         }
         boolean change;
         do {
-            change = f.invoke(new Grid(simulationGrid.grid, simulationGrid.updateGrid, 1, simulationGrid.getRows() + 1)); // invoke parallel task
+            change = f.invoke(new parallelGrid(simulationGrid.grid, simulationGrid.updateGrid, 1, simulationGrid.getRows() + 1)); // invoke parallel task
 			
             if (change) {
                 simulationGrid.nextTimeStep();
