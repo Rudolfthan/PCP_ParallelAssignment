@@ -11,8 +11,8 @@ import javax.imageio.ImageIO;
 //This class is for the grid for the Abelian Sandpile cellular automaton
 public class parallelGrid extends RecursiveTask<Boolean>{
 	private int rows, columns;
-	int [][] grid; //grid 
-	int [][] updateGrid;//grid for next time step
+	private int [][] grid; //grid 
+	private int [][] updateGrid;//grid for next time step
 	private int lo, hi;
 	private static final  int SEQUENTIAL_CUTOFF = 10;
 
@@ -72,6 +72,14 @@ public class parallelGrid extends RecursiveTask<Boolean>{
 
 	int get(int i, int j) {
 		return this.grid[i][j];
+	}
+	public int[][] getGrid(){
+		return grid;
+	}
+
+	public int[][] getUpdateGrid(){
+		return updateGrid;
+	
 	}
 
 	void setAll(int value) {

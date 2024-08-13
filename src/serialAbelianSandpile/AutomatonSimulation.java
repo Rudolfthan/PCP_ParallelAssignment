@@ -85,7 +85,7 @@ class AutomatonSimulation{
         }
         boolean change;
         do {
-            change = f.invoke(new parallelGrid(simulationGrid.grid, simulationGrid.updateGrid, 1, simulationGrid.getRows() + 1)); // invoke parallel task
+            change = f.invoke(new parallelGrid(simulationGrid.getGrid(), simulationGrid.getUpdateGrid(), 1, simulationGrid.getRows() + 1)); // invoke parallel task
 			
             if (change) {
                 simulationGrid.nextTimeStep();
