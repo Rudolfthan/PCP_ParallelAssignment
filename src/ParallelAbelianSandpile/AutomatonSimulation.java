@@ -1,5 +1,5 @@
 //Copyright M.M.Kuttel 2024 CSC2002S, UCT
-package serialAbelianSandpile;
+package ParallelAbelianSandpile;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -57,6 +57,7 @@ class AutomatonSimulation{
 	    }
 	 
     public static void main(String[] args) throws IOException  {
+		//initializing forkjoin pool
         ForkJoinPool f = ForkJoinPool.commonPool();
     	parallelGrid simulationGrid;  //the cellular automaton grid
     	  	
@@ -84,25 +85,29 @@ class AutomatonSimulation{
             simulationGrid.printGrid();
         }
         boolean change;
-        do {
-            change = f.invoke(new parallelGrid(simulationGrid.getGrid(), simulationGrid.getUpdateGrid(), 1, simulationGrid.getRows() + 1)); // invoke parallel task
-			
-            if (change) {
-                simulationGrid.nextTimeStep();
-                counter++;
-                if (DEBUG)
-                    simulationGrid.printGrid();
-            }
-        } while (change);
-        tock(); // end timer
+        change = true; // Initialize change to true to enter the loop
+
+        while (change) {
+    		change = f.invoke(new parallelGrid(simulationGrid.getGrid(), simulationGrid.getUpdateGrid(), 1, simulationGrid.getRows() + 1)); // invoke parallel task
+
+    		if (change) {
+        simulationGrid.nextTimeStep();
+        counter++;
+        if (DEBUG)
+            simulationGrid.printGrid();
+    }
+}
+
+tock(); // end timer
+
    		
         System.out.println("Simulation complete, writing image...");
     	simulationGrid.gridToImage(outputFileName); //write grid as an image - you must do this.
     	//Do NOT CHANGE below!
     	//simulation details - you must keep these lines at the end of the output in the parallel versions      	System.out.printf("\t Rows: %d, Columns: %d\n", simulationGrid.getRows(), simulationGrid.getColumns());
 		System.out.printf("Number of steps to stable state: %d \n",counter);
-		//System.out.println(Runtime.getRuntime().availableProcessors());
-		//System.out.println(Arrays.toString(simulationGrid.updateGrid));
+		// System.out.println(Runtime.getRuntime().availableProcessors());
+		// //System.out.println(Arrays.toString(simulationGrid.updateGrid));
 		System.out.printf("Time: %d ms\n",endTime - startTime );			/*  Total computation time */		
     }
 }

@@ -1,5 +1,5 @@
 //Copyright M.M.Kuttel 2024 CSC2002S, UCT
-package serialAbelianSandpile;
+package ParallelAbelianSandpile;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -14,7 +14,7 @@ public class parallelGrid extends RecursiveTask<Boolean>{
 	private int [][] grid; //grid 
 	private int [][] updateGrid;//grid for next time step
 	private int lo, hi;
-	private static final  int SEQUENTIAL_CUTOFF = 10;
+	private static final  int SEQUENTIAL_CUTOFF = 100;
 
     
 	public parallelGrid(int w, int h) {
@@ -100,10 +100,11 @@ public class parallelGrid extends RecursiveTask<Boolean>{
 		}
 	}
 	
-
+     
 	protected Boolean compute() {
 
         // do not update border
+		// checks if task should be done sequentially or in parallel
         if (hi - lo <= SEQUENTIAL_CUTOFF) {
             boolean change = false;
             for (int i = lo; i < hi; i++) {
@@ -120,11 +121,16 @@ public class parallelGrid extends RecursiveTask<Boolean>{
             } 
             return change;
         } else {
+			//for divide a problem into two sub problems
             int mid = (lo + hi) / 2;
+			//creating tasks
             parallelGrid left = new parallelGrid(grid,updateGrid, lo, mid);
             parallelGrid right = new parallelGrid(grid,updateGrid , mid, hi);
-			left.fork(); //this
+			//fork left task to run in parallel
+			left.fork();
+			// compute right task sequentially
             boolean rightAns = right.compute(); 
+			// join left task
             boolean leftAns = left.join(); 
             return leftAns || rightAns; 
             
